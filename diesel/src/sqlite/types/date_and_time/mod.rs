@@ -26,13 +26,6 @@ impl HasSqlType<types::Timestamp> for Sqlite {
     }
 }
 
-expression_impls!(Date -> String);
-expression_impls!(Date -> str, unsized);
-expression_impls!(Time -> String);
-expression_impls!(Time -> str, unsized);
-expression_impls!(Timestamp -> String);
-expression_impls!(Timestamp -> str, unsized);
-
 impl FromSql<types::Date, Sqlite> for String {
     fn from_sql(value: Option<&SqliteValue>) -> Result<Self, Box<Error + Send + Sync>> {
         FromSql::<types::Text, Sqlite>::from_sql(value)
