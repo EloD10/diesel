@@ -70,7 +70,7 @@ macro_rules! expression_impls {
         }
 
         impl<DB> $crate::types::ToSql<$crate::types::Nullable<$Source>, DB> for $Target where
-            DB: $crate::backend::Backend + $crate::types::HasSqlType<$Source>,
+            DB: $crate::backend::Backend,
             $Target: $crate::types::ToSql<$Source, DB>,
         {
             fn to_sql<W: ::std::io::Write>(&self, out: &mut $crate::types::ToSqlOutput<W, DB>) -> ::std::result::Result<$crate::types::IsNull, Box<::std::error::Error+Send+Sync>> {

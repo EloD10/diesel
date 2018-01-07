@@ -30,7 +30,6 @@ impl<T> NonAggregate for Range<T> {}
 impl<T, ST> Queryable<Range<ST>, Pg> for (Bound<T>, Bound<T>)
 where
     T: FromSql<ST, Pg> + Queryable<ST, Pg>,
-    Pg: HasSqlType<ST> + HasSqlType<Range<ST>>,
 {
     type Row = Self;
     fn build(row: Self) -> Self {
@@ -38,10 +37,7 @@ where
     }
 }
 
-impl<ST, T> AsExpression<Range<ST>> for (Bound<T>, Bound<T>)
-where
-    Pg: HasSqlType<ST> + HasSqlType<Range<ST>>,
-{
+impl<ST, T> AsExpression<Range<ST>> for (Bound<T>, Bound<T>) {
     type Expression = SqlBound<Range<ST>, Self>;
 
     fn as_expression(self) -> Self::Expression {
@@ -49,10 +45,7 @@ where
     }
 }
 
-impl<'a, ST, T> AsExpression<Range<ST>> for &'a (Bound<T>, Bound<T>)
-where
-    Pg: HasSqlType<ST> + HasSqlType<Range<ST>>,
-{
+impl<'a, ST, T> AsExpression<Range<ST>> for &'a (Bound<T>, Bound<T>) {
     type Expression = SqlBound<Range<ST>, Self>;
 
     fn as_expression(self) -> Self::Expression {
@@ -60,10 +53,7 @@ where
     }
 }
 
-impl<ST, T> AsExpression<Nullable<Range<ST>>> for (Bound<T>, Bound<T>)
-where
-    Pg: HasSqlType<ST> + HasSqlType<Range<ST>>,
-{
+impl<ST, T> AsExpression<Nullable<Range<ST>>> for (Bound<T>, Bound<T>) {
     type Expression = SqlBound<Nullable<Range<ST>>, Self>;
 
     fn as_expression(self) -> Self::Expression {
@@ -71,10 +61,7 @@ where
     }
 }
 
-impl<'a, ST, T> AsExpression<Nullable<Range<ST>>> for &'a (Bound<T>, Bound<T>)
-where
-    Pg: HasSqlType<ST> + HasSqlType<Range<ST>>,
-{
+impl<'a, ST, T> AsExpression<Nullable<Range<ST>>> for &'a (Bound<T>, Bound<T>) {
     type Expression = SqlBound<Nullable<Range<ST>>, Self>;
 
     fn as_expression(self) -> Self::Expression {
@@ -85,7 +72,6 @@ where
 impl<T, ST> FromSqlRow<Range<ST>, Pg> for (Bound<T>, Bound<T>)
 where
     (Bound<T>, Bound<T>): FromSql<Range<ST>, Pg>,
-    Pg: HasSqlType<ST> + HasSqlType<Range<ST>>,
 {
     fn build_from_row<R: ::row::Row<Pg>>(row: &mut R) -> Result<Self, Box<Error + Send + Sync>> {
         FromSql::<Range<ST>, Pg>::from_sql(row.take())
@@ -95,7 +81,6 @@ where
 impl<T, ST> FromSql<Range<ST>, Pg> for (Bound<T>, Bound<T>)
 where
     T: FromSql<ST, Pg>,
-    Pg: HasSqlType<ST> + HasSqlType<Range<ST>>,
 {
     fn from_sql(bytes: Option<&[u8]>) -> Result<Self, Box<Error + Send + Sync>> {
         let mut bytes = not_none!(bytes);
@@ -133,7 +118,6 @@ where
 
 impl<ST, T> ToSql<Range<ST>, Pg> for (Bound<T>, Bound<T>)
 where
-    Pg: HasSqlType<ST> + HasSqlType<Range<ST>>,
     T: ToSql<ST, Pg>,
 {
     fn to_sql<W: Write>(
@@ -182,7 +166,6 @@ where
 
 impl<ST, T> ToSql<Nullable<Range<ST>>, Pg> for (Bound<T>, Bound<T>)
 where
-    Pg: HasSqlType<Range<ST>>,
     (Bound<T>, Bound<T>): ToSql<Range<ST>, Pg>,
 {
     fn to_sql<W: Write>(

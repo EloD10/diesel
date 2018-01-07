@@ -2,8 +2,8 @@ use std::error::Error;
 use std::io::Write;
 
 use backend::Backend;
-use types::{self, BigInt, Binary, Bool, Date, Double, Float, FromSql, HasSqlType, Integer, IsNull,
-            NotNull, SmallInt, Text, Time, Timestamp, ToSql, ToSqlOutput};
+use types::{self, BigInt, Binary, Bool, Date, Double, Float, FromSql, Integer, IsNull, NotNull,
+            SmallInt, Text, Time, Timestamp, ToSql, ToSqlOutput};
 
 primitive_impls!(Bool -> (bool, pg: (16, 1000), sqlite: (Integer), mysql: (Tiny)));
 
@@ -135,7 +135,7 @@ use std::borrow::{Cow, ToOwned};
 impl<'a, T: ?Sized, ST, DB> ToSql<ST, DB> for Cow<'a, T>
 where
     T: 'a + ToOwned + ToSql<ST, DB>,
-    DB: Backend + HasSqlType<ST>,
+    DB: Backend,
     T::Owned: ToSql<ST, DB>,
 {
     fn to_sql<W: Write>(
@@ -152,7 +152,7 @@ where
 impl<'a, T: ?Sized, ST, DB> FromSql<ST, DB> for Cow<'a, T>
 where
     T: 'a + ToOwned,
-    DB: Backend + HasSqlType<ST>,
+    DB: Backend,
     T::Owned: FromSql<ST, DB>,
 {
     fn from_sql(bytes: Option<&DB::RawValue>) -> Result<Self, Box<Error + Send + Sync>> {
@@ -163,7 +163,7 @@ where
 impl<'a, T: ?Sized, ST, DB> ::types::FromSqlRow<ST, DB> for Cow<'a, T>
 where
     T: 'a + ToOwned,
-    DB: Backend + HasSqlType<ST>,
+    DB: Backend,
     Cow<'a, T>: FromSql<ST, DB>,
 {
     fn build_from_row<R: ::row::Row<DB>>(row: &mut R) -> Result<Self, Box<Error + Send + Sync>> {
@@ -174,7 +174,7 @@ where
 impl<'a, T: ?Sized, ST, DB> ::Queryable<ST, DB> for Cow<'a, T>
 where
     T: 'a + ToOwned,
-    DB: Backend + HasSqlType<ST>,
+    DB: Backend,
     Self: ::types::FromSqlRow<ST, DB>,
 {
     type Row = Self;
